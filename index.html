@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Save My Soul — Devotional</title>
+
+  <!-- PWA manifest -->
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- Theme color for address bar -->
+  <meta name="theme-color" content="#1976d2" />
+
+  <!-- Fallback icons / Apple -->
+  <link rel="apple-touch-icon" href="/icon-192.png" />
+</head>
+<body>
+  <main>
+    <h1>Save My Soul — Devotional</h1>
+    <p>Welcome — this site is configured as a Progressive Web App.</p>
+
+    <button id="installBtn" style="display:none">Install App</button>
+
+    <section>
+      <h2>Offline support</h2>
+      <p>Your service worker caches core assets (index, manifest, icons) to enable offline usage.</p>
+    </section>
+  </main>
+
+  <script src="/sw-register.js"></script>
+  <script>
+    // Install button handling (uses beforeinstallprompt)
+    (function () {
+      let deferredPrompt;
+      const installBtn = document.getElementById('installBtn');
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installBtn.style.display = 'inline-block';
+      });
+
+      installBtn.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log('User response to the install prompt:', outcome);
+        deferredPrompt = null;
+        installBtn.style.display = 'none';
+      });
+
+      window.addEventListener('appinstalled', () => {
+        console.log('PWA was installed');
+        installBtn.style.display = 'none';
+      });
+    })();
+  </script>
+</body>
+</html>
